@@ -67,7 +67,5 @@ public:
 
 } //end namespace EspWiFi
 } //end namespace ArduinoOcpp
-
-
 #endif //ndef AO_CUSTOM_WS
 #endif
