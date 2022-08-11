@@ -10,21 +10,23 @@
 
 namespace ArduinoOcpp {
 
-using ReceiveTXTcallback = std::function<bool(const char*, size_t)>;
+    using ReceiveTXTcallback = std::function<bool(const char*, size_t)>;
 
-class OcppSocket {
-public:
-    OcppSocket() = default;
-    virtual ~OcppSocket() = default;
+    class OcppSocket {
+    public:
+        OcppSocket() = default;
+        virtual ~OcppSocket() = default;
 
-    virtual void loop() = 0;
+        virtual void loop() = 0;
 
-    virtual bool sendTXT(std::string &out) = 0;
+        virtual bool sendTXT(std::string &out) = 0;
 
-    virtual void setReceiveTXTcallback(ReceiveTXTcallback &receiveTXT) = 0; //ReceiveTXTcallback is defined in OcppServer.h
-};
+        virtual void setReceiveTXTcallback(ReceiveTXTcallback &receiveTXT) = 0; //ReceiveTXTcallback is defined in OcppServer.h
+    };
 
 } //end namespace ArduinoOcpp
+
+bool getOcppSocketStatus(); // returns 1 if socket is opened else returns 0
 
 #ifndef AO_CUSTOM_WS
 
@@ -65,5 +67,7 @@ public:
 
 } //end namespace EspWiFi
 } //end namespace ArduinoOcpp
+
+
 #endif //ndef AO_CUSTOM_WS
 #endif

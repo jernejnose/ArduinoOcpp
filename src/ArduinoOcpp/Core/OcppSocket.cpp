@@ -24,14 +24,18 @@ bool OcppClientSocket::sendTXT(std::string &out) {
     return wsock->sendTXT(out.c_str(), out.length());
 }
 
+static bool OcppSocketStatus = 0;
+
 void OcppClientSocket::setReceiveTXTcallback(ReceiveTXTcallback &callback) {
     wsock->onEvent([callback](WStype_t type, uint8_t * payload, size_t length) {
         switch (type) {
             case WStype_DISCONNECTED:
                 AO_DBG_INFO("Disconnected");
+                OcppSocketStatus = 0;
                 break;
             case WStype_CONNECTED:
                 AO_DBG_INFO("Connected to url: %s", payload);
+                OcppSocketStatus = 1;
                 break;
             case WStype_TEXT:
                 AO_DBG_TRAFFIC_IN(payload);
@@ -79,5 +83,10 @@ bool OcppServerSocket::sendTXT(std::string &out) {
 void OcppServerSocket::setReceiveTXTcallback(ReceiveTXTcallback &callback) {
     OcppServer::getInstance()->setReceiveTXTcallback(ip_addr, callback);
 }
+
+bool getOcppSocketStatus(){
+    return OcppSocketStatus;
+}
+
 
 #endif
