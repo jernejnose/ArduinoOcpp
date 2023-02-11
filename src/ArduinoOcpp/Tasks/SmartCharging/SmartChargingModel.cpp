@@ -10,15 +10,17 @@
 
 using namespace ArduinoOcpp;
 
-ChargingSchedulePeriod::ChargingSchedulePeriod(JsonObject &json){
+ChargingSchedulePeriod::ChargingSchedulePeriod(JsonObject &json, ChargingRateUnitType unit=ChargingRateUnitType::Watt){
     startPeriod = json["startPeriod"];
     limit = json["limit"]; //one fractural digit at most
     numberPhases = json["numberPhases"] | -1;
+    chargingRateUnit = unit;
 }
 
-ChargingSchedulePeriod::ChargingSchedulePeriod(int startPeriod, float limit){
+ChargingSchedulePeriod::ChargingSchedulePeriod(int startPeriod, float limit, ChargingRateUnitType unit=ChargingRateUnitType::Watt){
     this->startPeriod = startPeriod;
     this->limit = limit;
+    this->chargingRateUnit = unit;
     numberPhases = -1; //support later
 }
 
@@ -27,7 +29,19 @@ int ChargingSchedulePeriod::getStartPeriod(){
 }
 
 float ChargingSchedulePeriod::getLimit(){
-    return this->limit;
+    float amp_limit = 32.0;
+    if (this->chargingRateUnit == (ChargingRateUnitType::Watt)) {
+        //Assume 3 phases if -1
+        if (numberPhases == -1) {
+            amp_limit = ceil(this->limit / 3 / 230 * 10) / 10; //TODO: don't use hardcoded voltage
+        } else {
+            amp_limit = ceil(this->limit / numberPhases / 230 * 10) / 10;
+        }  
+    } else if (this->chargingRateUnit == (ChargingRateUnitType::Amp)) {
+        // if already in amps round to 0.1 A
+        amp_limit = ceil(this->limit * 10) / 10;
+    }
+    return amp_limit;
 }
 
 void ChargingSchedulePeriod::scale(float factor){
@@ -75,7 +89,7 @@ ChargingSchedule::ChargingSchedule(JsonObject &json, ChargingProfileKindType cha
     
     JsonArray periodJsonArray = json["chargingSchedulePeriod"];
     for (JsonObject periodJson : periodJsonArray) {
-        auto period = std::unique_ptr<ChargingSchedulePeriod>(new ChargingSchedulePeriod(periodJson));
+        auto period = std::unique_ptr<ChargingSchedulePeriod>(new ChargingSchedulePeriod(periodJson, chargingRateUnit));
         chargingSchedulePeriod.push_back(std::move(period));
     }
 
@@ -86,6 +100,18 @@ ChargingSchedule::ChargingSchedule(JsonObject &json, ChargingProfileKindType cha
     });
     
     minChargingRate = json["minChargingRate"] | -1.0f;
+    //Convert minChargingRate to amps, 0.1 A precision
+    float amp_limit = 32.0;
+    if (chargingRateUnit == ChargingRateUnitType::Watt) {
+        if (numberPhases == -1) {
+            amp_limit = ceil(minChargingRate / 3 / 230 * 10) / 10; //TODO: don't use hardcoded voltage
+            amp_limit = ceil(minChargingRate / numberPhases / 230 * 10) / 10;
+        }  
+        
+    } else {
+        amp_limit = ceil(minChargingRate * 10) / 10;
+    }
+    minChargingRate = amp_limit;
 }
 
 ChargingSchedule::ChargingSchedule(ChargingSchedule &other) {
