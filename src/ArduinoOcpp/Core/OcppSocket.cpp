@@ -38,8 +38,6 @@ void OcppClientSocket::setReceiveTXTcallback(ReceiveTXTcallback &callback) {
                 OcppSocketStatus = 1;
                 break;
             case WStype_TEXT:
-                AO_DBG_TRAFFIC_IN(payload);
-
                 if (!callback((const char *) payload, length)) { //forward message to OcppEngine
                     AO_DBG_WARN("Processing WebSocket input event failed");
                 }
@@ -49,11 +47,11 @@ void OcppClientSocket::setReceiveTXTcallback(ReceiveTXTcallback &callback) {
                 break;
             case WStype_PING:
                 // pong will be send automatically
-                AO_DBG_TRAFFIC_IN("WS ping");
+                AO_DBG_TRAFFIC_IN(8, "WS ping");
                 break;
             case WStype_PONG:
                 // answer to a ping we send
-                AO_DBG_TRAFFIC_IN("WS pong");
+                AO_DBG_TRAFFIC_IN(8, "WS pong");
                 break;
             case WStype_FRAGMENT_TEXT_START: //fragments are not supported
             default:

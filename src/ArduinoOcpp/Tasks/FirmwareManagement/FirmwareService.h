@@ -53,8 +53,8 @@ private:
     std::function<bool(const std::string &location)> onDownload = NULL;
     std::function<bool(const std::string &location)> onInstall = NULL;
 
-    ulong delayTransition = 0;
-    ulong timestampTransition = 0;
+    unsigned long delayTransition = 0;
+    unsigned long timestampTransition = 0;
 
     enum class UpdateStage {
         Idle,
@@ -66,8 +66,6 @@ private:
     } stage;
 
     void resetStage();
-
-    bool availabilityRestore = false;
 
     std::unique_ptr<OcppOperation> getFirmwareStatusNotification();
 

@@ -5,6 +5,21 @@
 #ifndef CONFIGURATIONOPTIONS_H
 #define CONFIGURATIONOPTIONS_H
 
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+struct AO_FilesystemOpt {
+    bool use;
+    bool mount;
+    bool formatFsOnFail;
+};
+
+#ifdef __cplusplus
+}
+
 namespace ArduinoOcpp {
 
 class FilesystemOpt{
@@ -31,6 +46,11 @@ public:
                 break;
         }
     }
+    FilesystemOpt(struct AO_FilesystemOpt fsopt) {
+        this->use = fsopt.use;
+        this->mount = fsopt.mount;
+        this->formatFsOnFail = fsopt.formatFsOnFail;
+    }
 
     bool accessAllowed() {return use;}
     bool mustMount() {return mount;}
@@ -38,5 +58,7 @@ public:
 };
 
 } //end namespace ArduinoOcpp
+
+#endif //__cplusplus
 
 #endif
