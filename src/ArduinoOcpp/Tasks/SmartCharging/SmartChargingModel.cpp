@@ -24,6 +24,13 @@ ChargingSchedulePeriod::ChargingSchedulePeriod(int startPeriod, float limit, Cha
     numberPhases = -1; //support later
 }
 
+ChargingSchedulePeriod::ChargingSchedulePeriod(int startPeriod, float limit){
+    this->startPeriod = startPeriod;
+    this->limit = limit;
+    this->chargingRateUnit = ChargingRateUnitType::Watt; //default is Watt
+    numberPhases = -1; //support later
+}
+
 int ChargingSchedulePeriod::getStartPeriod(){
     return this->startPeriod;
 }
@@ -75,6 +82,7 @@ ChargingSchedule::ChargingSchedule(JsonObject &json, ChargingProfileKindType cha
       , recurrencyKind(recurrencyKind) {  
   
     duration = json["duration"] | -1;
+    numberPhases = json["numberPhases"] | -1;
     startSchedule = OcppTimestamp();
     if (!startSchedule.setTime(json["startSchedule"] | "Invalid")) {
         //non-success

@@ -40,8 +40,11 @@ private:
     int startPeriod;
     float limit; //one fractural digit at most
     int numberPhases = -1;
+    ChargingRateUnitType chargingRateUnit;
+
 public:
-    ChargingSchedulePeriod(JsonObject &json);
+    ChargingSchedulePeriod(JsonObject &json, ChargingRateUnitType unit);
+    ChargingSchedulePeriod(int startPeriod, float limit, ChargingRateUnitType unit);
     ChargingSchedulePeriod(int startPeriod, float limit);
     int getStartPeriod();
     float getLimit();
@@ -58,6 +61,7 @@ private:
     ChargingRateUnitType chargingRateUnit;
     std::vector<std::unique_ptr<ChargingSchedulePeriod>> chargingSchedulePeriod;
     float minChargingRate = -1.0f;
+    int numberPhases = -1;
 
     ChargingProfileKindType chargingProfileKind; //copied from ChargingProfile to increase cohesion of limit inferencing methods
     RecurrencyKindType recurrencyKind; //copied from ChargingProfile to increase cohesion of limit inferencing methods
