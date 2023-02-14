@@ -368,7 +368,7 @@ void setSmartChargingOutput(std::function<void(float)> chargingLimitOutput, unsi
     auto& model = ocppEngine->getOcppModel();
     if (!model.getSmartChargingService()) {
         model.setSmartChargingService(std::unique_ptr<SmartChargingService>(
-            new SmartChargingService(*ocppEngine, 11000.0f, voltage_eff, AO_NUMCONNECTORS, fileSystemOpt))); //default charging limit: 11kW
+            new SmartChargingService(*ocppEngine, 32.0f, voltage_eff, AO_NUMCONNECTORS, fileSystemOpt))); //default charging limit: 32A
     }
     model.getSmartChargingService()->setOnLimitChange(chargingLimitOutput);
 }
