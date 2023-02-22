@@ -5,6 +5,8 @@
 #ifndef ARDUINOOCPP_H
 #define ARDUINOOCPP_H
 
+#define AO_CUSTOM_UPDATER
+
 #include <ArduinoJson.h>
 #include <memory>
 #include <functional>
